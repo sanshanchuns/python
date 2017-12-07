@@ -3,7 +3,7 @@ from torch.autograd import Variable
 import torch.nn.functional as F
 import matplotlib.pyplot as plt
 
-x = torch.unsqueeze(torch.linspace(-1, 1, 1000), dim=1)
+x = torch.unsqueeze(torch.linspace(-1, 1, 100), dim=1)
 # y = x.pow(2) + 0.2*torch.rand(x.size())
 y = -x.pow(2) + 0.2*torch.normal(torch.zeros(x.size()))
 
@@ -45,7 +45,7 @@ for n in range(100):
         plt.scatter(x.data.numpy(),
                     y.data.numpy(),
                     s=10,
-                    c=torch.arange(0, 1000).numpy().reshape(1000,1),
+                    c=torch.arange(0, 100).numpy().reshape(100, 1),
                     cmap='rainbow',
                     )
         plt.plot(x.data.numpy(), output.data.numpy(), 'r-', lw=2)

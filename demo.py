@@ -1,44 +1,30 @@
-#!/usr/bin/python
-# -*- coding: UTF-8 -*-
 
-import torch
-from torch.autograd import Variable
-import torch.utils.data as Data
-import torch.nn.functional as F
-import matplotlib.pyplot as plt
+import tensorflow as tf
 import numpy as np
 
-for i in range(100):
-    z = i*10
+#fake data
+x = np.random.rand(100).astype(np.float32)
+y_label = x*0.1 + 0.3
 
-print(z)
+# create tensorflow structure
 
-# x = np.arange(200)
-#
-# print(x)
-#
-# plt.scatter(x, x, s=10, c=np.arange(200), cmap='rainbow')
-# plt.show()
+w = tf.Variable(tf.random_uniform([1], -1, 1))
+b = tf.Variable(tf.zeros([1]))
 
-# n_data = torch.ones(100, 2)
-# x = torch.normal(-2*n_data, 1)
-# y = torch.normal(2*n_data, 1)
+y = w*x + b
 
-# plt.plot(x.numpy(), label=y[0])
-# plt.scatter(x.numpy(), y.numpy(), c=x.numpy(), cmap='rainbow', s=10)
-# plt.legend(loc='best')
-# plt.show()
+loss = tf.reduce_mean(tf.square(y - y_label))
+optimizer = tf.train.GradientDescentOptimizer(0.5)
+train = optimizer.minimize(loss)
 
+init = tf.global_variables_initializer()
 
+# create tensorflow structure
 
+sess = tf.Session()
+sess.run(init)  # start from init
 
-
-
-
-
-
-
-
-
-
-
+for step in range(201):
+    sess.run(train) # start train
+    if step % 20 == 0:
+        print(step, sess.run(w), sess.run(b))
