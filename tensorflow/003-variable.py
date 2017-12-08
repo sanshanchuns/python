@@ -2,21 +2,18 @@
 import tensorflow as tf
 
 state = tf.Variable(1, name='constant')
+one = tf.constant(1)
 
+update = tf.assign(state, tf.add(state, one))
 
+init = tf.global_variables_initializer()
 
+with tf.Session() as sess:
+    sess.run(init)
 
-
-
-
-
-
-
-
-
-
-
-
+    for i in range(3):
+        sess.run(update)
+        print(sess.run(state))
 
 # state = tf.Variable(1, name='counter')
 # one = tf.constant(1)
