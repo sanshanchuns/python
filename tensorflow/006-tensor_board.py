@@ -17,6 +17,9 @@ def add_layer(inputs, in_size, out_size, act_func=None):
 x = np.linspace(-1, 1, 300, dtype=np.float32)[:, np.newaxis]
 y = np.square(x) + np.random.normal(0, 0.05, x.shape).astype(np.float32)
 
+xs = tf.placeholder(tf.float32, [None, 1], name='x_input')
+ys = tf.placeholder(tf.float32, [None, 1], name='y_input')
+
 # create layer
 hidden = add_layer(x, 1, 10, tf.nn.relu)
 output = add_layer(hidden, 10, 1)
