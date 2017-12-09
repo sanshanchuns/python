@@ -2,33 +2,44 @@ import tensorflow as tf
 import numpy as np
 import matplotlib.pyplot as plt
 
-def add_layer(inputs, in_size, out_size, act_func=None):
-    W = tf.Variable(tf.random_normal([in_size, out_size]))
-    b = tf.Variable(tf.zeros([1, out_size]) + 0.1)
-    Wx_plus_b = tf.matmul(inputs, W) + b
 
-    if act_func is None:
-        return Wx_plus_b
-    else:
-        return act_func(Wx_plus_b)
+def add_layer(inputs, in_size, out_size, act_func=None):
+    with tf.name_scope('layer'):
+        with tf.name_scope('weights'):
+            W = tf.Variable(tf.random_normal([in_size, out_size]), name='W')
+        with tf.name_scope('biases'):
+            b = tf.Variable(tf.zeros([1, out_size]) + 0.1, name='b')
+        with tf.name_scope('Wx_plus_b'):
+            Wx_plus_b = tf.matmul(inputs, W) + b
+
+        if act_func is None:
+            return Wx_plus_b
+        else:
+            return act_func(Wx_plus_b)
 
 
 # fake data
 x = np.linspace(-1, 1, 300, dtype=np.float32)[:, np.newaxis]
 y = np.square(x) + np.random.normal(0, 0.05, x.shape).astype(np.float32)
 
-xs = tf.placeholder(tf.float32, [None, 1], name='x_input')
-ys = tf.placeholder(tf.float32, [None, 1], name='y_input')
+with tf.name_scope('inputs'):
+    xs = tf.placeholder(tf.float32, [None, 1], name='x_input')
+    ys = tf.placeholder(tf.float32, [None, 1], name='y_input')
 
 # create layer
+
 hidden = add_layer(x, 1, 10, tf.nn.relu)
 output = add_layer(hidden, 10, 1)
 
 # calculate loss
-loss = tf.reduce_mean(tf.reduce_sum(tf.square(y - output), 1))
-train = tf.train.GradientDescentOptimizer(0.1).minimize(loss)
+with tf.name_scope('loss'):
+    loss = tf.reduce_mean(tf.reduce_sum(tf.square(y - output), 1))
+with tf.name_scope('train'):
+    train = tf.train.GradientDescentOptimizer(0.1).minimize(loss)
 init = tf.global_variables_initializer()
 loss_his = []
+
+writer = tf.train.SummaryWriter('logs/', sess.graph)
 
 with tf.Session() as sess:
     sess.run(init)
