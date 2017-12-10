@@ -1,3 +1,4 @@
+tensorflow/logs
 .python-version
 mnist/
 .idea/workspace.xml
