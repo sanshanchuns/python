@@ -3,19 +3,28 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-def add_layer(inputs, in_size, out_size, act_func=None):
+def add_layer(inputs, in_size, out_size, n_layer, act_func=None):
+
+    layer_name = 'layer%s' % n_layer
+
     with tf.name_scope('layer'):
         with tf.name_scope('weights'):
             W = tf.Variable(tf.random_normal([in_size, out_size]), name='W')
+            tf.summary.histogram(layer_name + '/weights', W)
         with tf.name_scope('biases'):
             b = tf.Variable(tf.zeros([1, out_size]) + 0.1, name='b')
+            tf.summary.histogram(layer_name + '/biases', b)
         with tf.name_scope('Wx_plus_b'):
             Wx_plus_b = tf.matmul(inputs, W) + b
 
         if act_func is None:
-            return Wx_plus_b
+            outputs = Wx_plus_b
         else:
-            return act_func(Wx_plus_b)
+            outputs = act_func(Wx_plus_b)
+
+        tf.summary.histogram(layer_name + '/outputs', outputs)
+
+    return outputs
 
 
 # fake data
@@ -28,43 +37,45 @@ with tf.name_scope('inputs'):
 
 # create layer
 
-hidden = add_layer(x, 1, 10, tf.nn.relu)
-output = add_layer(hidden, 10, 1)
+hidden = add_layer(x, 1, 10, 1, tf.nn.relu)
+output = add_layer(hidden, 10, 1, 2)
 
 # calculate loss
 with tf.name_scope('loss'):
     loss = tf.reduce_mean(tf.reduce_sum(tf.square(y - output), 1))
+    tf.summary.scalar('loss', loss)
 with tf.name_scope('train'):
     train = tf.train.GradientDescentOptimizer(0.1).minimize(loss)
 init = tf.global_variables_initializer()
 loss_his = []
 
-writer = tf.train.SummaryWriter('logs/', sess.graph)
+sess = tf.Session()
 
-with tf.Session() as sess:
-    sess.run(init)
+merged = tf.summary.merge_all()
 
-    for i in range(1000):
-        sess.run(train)
+writer = tf.summary.FileWriter('logs/', sess.graph)
 
-        loss_his.append(sess.run(loss))
+sess.run(init)
+for i in range(1000):
+    sess.run(train)
 
-        if i % 50 == 0:
-            print(sess.run(loss))
+    loss_his.append(sess.run(loss))
 
-            plt.clf()
-            plt.figure(1, figsize=(10, 3))
-            plt.subplot(121)
-            plt.scatter(x, y, s=10, c=x, cmap='rainbow')
-            plt.plot(x, sess.run(output), 'r-', lw=1)
+    if i % 50 == 0:
+        rs = sess.run(merged)
+        writer.add_summary(rs, i)
 
-            plt.subplot(122)
-            plt.plot(loss_his)
-            plt.xlabel('Steps')
-            plt.ylabel('Loss')
-            plt.ylim((0, 0.02))
-
-            plt.pause(0.1)
-
-    plt.pause(3)
+        # plt.clf()
+        # plt.figure(1, figsize=(10, 3))
+        # plt.subplot(121)
+        # plt.scatter(x, y, s=10, c=x, cmap='rainbow')
+        # plt.plot(x, sess.run(output), 'r-', lw=1)
+        #
+        # plt.subplot(122)
+        # plt.plot(loss_his)
+        # plt.xlabel('Steps')
+        # plt.ylabel('Loss')
+        # plt.ylim((0, 0.02))
+        #
+        # plt.pause(0.1)
 
