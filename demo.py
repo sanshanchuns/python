@@ -29,10 +29,10 @@ import numpy as np
 #     if step % 20 == 0:
 #         print(step, sess.run(w), sess.run(b))
 
-x = tf.constant(1)
-y = tf.constant(2)
-
-print(tf.Session().run(tf.add(x, y)))
+# x = tf.constant(1)
+# y = tf.constant(2)
+#
+# print(tf.Session().run(tf.add(x, y)))
 # tf.reduce_sum(x)  # 6
 # tf.reduce_sum(x, 0)  # [2, 2, 2]
 # tf.reduce_sum(x, 1)  # [3, 3]
@@ -41,3 +41,7 @@ print(tf.Session().run(tf.add(x, y)))
 
 # print(tf.Session().run(tf.reduce_sum(x, reduction_indices=[1])))
 # print(tf.Session().run(tf.reduce_sum(x, 1)))
+
+x = np.random.normal(np.ones([2, 3, 4]))
+print(x.shape) #有多少维度
+print(x.size) #一共有多少个元素
