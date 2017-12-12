@@ -1,6 +1,7 @@
 
 import tensorflow as tf
 import numpy as np
+import matplotlib.pyplot as plt
 
 #fake data
 # x = np.random.rand(100).astype(np.float32)
@@ -42,6 +43,13 @@ import numpy as np
 # print(tf.Session().run(tf.reduce_sum(x, reduction_indices=[1])))
 # print(tf.Session().run(tf.reduce_sum(x, 1)))
 
-x = np.random.normal(np.ones([2, 3, 4]))
-print(x.shape) #有多少维度
-print(x.size) #一共有多少个元素
+# x = np.random.normal(np.ones([2, 3, 4]))
+# print(x.shape) #有多少维度
+# print(x.size) #一共有多少个元素
+
+gold, chidhh = 400, 400
+gold_height = 25 + 10* np.random.randn(gold)
+chidhh_height = 16 + 6* np.random.randn(chidhh)
+
+plt.hist([gold_height, chidhh_height], stacked=False, color=['r', 'b'])
+plt.show()
