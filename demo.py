@@ -47,9 +47,12 @@ import matplotlib.pyplot as plt
 # print(x.shape) #有多少维度
 # print(x.size) #一共有多少个元素
 
-gold, chidhh = 400, 400
-gold_height = 25 + 10* np.random.randn(gold)
-chidhh_height = 16 + 6* np.random.randn(chidhh)
+gold, chihh = 400, 400
 
-plt.hist([gold_height, chidhh_height], stacked=False, color=['r', 'b'])
+gold_height = 40 + 10* np.random.randn(gold)
+chihh_height = 25 + 6* np.random.randn(chihh)
+
+# print(gold_height)
+
+plt.hist([gold_height, chihh_height], stacked=True, color=['r', 'b'])
 plt.show()
