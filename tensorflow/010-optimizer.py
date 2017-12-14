@@ -2,6 +2,7 @@ import tensorflow as tf
 import numpy as np
 import matplotlib.pyplot as plt
 
+LR = 0.01
 BATCH_SIZE = 32
 
 #fake data
@@ -15,7 +16,7 @@ class Net():
         hidden = tf.layers.dense(self.x, 20, tf.nn.relu)
         output = tf.layers.dense(hidden, 1)
         self.loss = tf.losses.mean_squared_error(output, self.y)
-        self.train = opt(0.01, **kwargs).minimize(self.loss)
+        self.train = opt(LR, **kwargs).minimize(self.loss)
 
 
 net_SGD = Net(tf.train.GradientDescentOptimizer)
@@ -43,5 +44,5 @@ for label, loss_his in zip(lables, losses_his):
 plt.legend(loc='best')
 plt.xlabel('Steps')
 plt.ylabel('Losses')
-plt.ylim((0, 0.02))
+plt.ylim((0, 0.2))
 plt.show()

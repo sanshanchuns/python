@@ -23,8 +23,8 @@ noise = np.random.normal(0, 0.1, size=x.shape)
 y = np.power(x, 2) + noise                          # shape (100, 1) + some noise
 
 # plot dataset
-plt.scatter(x, y)
-plt.show()
+# plt.scatter(x, y)
+# plt.show()
 
 # default network
 class Net:

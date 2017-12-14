@@ -13,7 +13,7 @@ from tensorflow.contrib.data import Dataset
 npx = np.random.uniform(-1, 1, (1000, 1))                           # x data
 npy = np.power(npx, 2) + np.random.normal(0, 0.1, size=npx.shape)   # y data
 npx_train, npx_test = np.split(npx, [800])                          # training and test data
-npy_train, npy_test = np.split(npy, [800])
+npy_train, npy_test = np.split(npy, [800])  # 800, 200
 
 # use placeholder, later you may need different data, pass the different data into placeholder
 tfx = tf.placeholder(npx_train.dtype, npx_train.shape)
