@@ -10,8 +10,6 @@ np.random.seed(1)
 x = np.linspace(-1, 1, 300)[:, np.newaxis]
 y = np.power(x, 2) + np.random.normal(0, 0.05, x.shape)
 
-np.random.randn()
-
 #placeholder
 xs = tf.placeholder(tf.float32, x.shape)
 ys = tf.placeholder(dtype=tf.float32, shape=y.shape)

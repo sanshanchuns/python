@@ -24,8 +24,8 @@ x = np.vstack((x0, x1))  # shape (200, 2) + some noise
 y = np.hstack((y0, y1))  # shape (200, )
 
 # plot data
-plt.scatter(x[:, 0], x[:, 1], c=y, s=100, lw=0, cmap='RdYlGn')
-plt.show()
+# plt.scatter(x[:, 0], x[:, 1], c=y, s=100, lw=0, cmap='RdYlGn')
+# plt.show()
 
 tf_x = tf.placeholder(tf.float32, x.shape)     # input x
 tf_y = tf.placeholder(tf.int32, y.shape)     # input y
