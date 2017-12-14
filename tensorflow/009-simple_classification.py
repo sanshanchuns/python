@@ -5,6 +5,34 @@ import matplotlib.pyplot as plt
 tf.set_random_seed(1)
 np.random.seed(1)
 
+# fake data
+
+data = np.ones((100, 2))
+
+x0 = np.random.normal(2, 1, data.shape)
+
+print(x0)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #fake data
 # n_data = np.ones((100, 2))
 # x0 = np.random.normal(2*n_data, 1)      # class0 x shape=(100, 2)
@@ -18,44 +46,44 @@ np.random.seed(1)
 # plt.scatter(x[:, 0], x[:, 1], c=y, s=100, lw=0, cmap='rainbow')
 # plt.show()
 
-data_num = 1000
-
-data = np.ones((data_num, 2)) #这里的二维是为了画图, 区分的数据本身可以是任意维度的
-
-x0 = np.random.normal(2, 1, data.shape)
-x1 = np.random.normal(-2, 1, data.shape)
-x2 = np.random.normal(6, 1, data.shape)
-
-x = np.vstack((x0, x1, x2)) #(300, 2)
-y = np.hstack((np.zeros(data_num), np.ones(data_num), 2*np.ones(data_num)))  #(300, )
-
-# plt.scatter(x[:, 0], x[:, 1], s=10, c=y, cmap='rainbow')
-# plt.show()
-
+# data_num = 1000
 #
-# placeholder
-xs = tf.placeholder(tf.float32, x.shape)
-ys = tf.placeholder(tf.int32, y.shape)
-
-# # create layer
-hidden = tf.layers.dense(xs, 10, tf.nn.relu)
-output = tf.layers.dense(hidden, 3)  #因此要区分三类物体，因此有3个输出[0, 1, 2]
-
-# calculate loss
-loss = tf.losses.sparse_softmax_cross_entropy(labels=ys, logits=output)
-train = tf.train.GradientDescentOptimizer(0.1).minimize(loss)
-
-sess = tf.Session()
-sess.run(tf.group(tf.global_variables_initializer()))
-# sess.run(tf.group(tf.global_variables_initializer(), tf.local_variables_initializer()))
-
-for i in range(data_num):
-    _, l, op = sess.run([train, loss, output], feed_dict={xs: x, ys: y})
-
-    if i % 50 == 0:
-        print(l)
-        prediction = sess.run(tf.argmax(op, axis=1))
-        plt.cla()
-        plt.scatter(x[:, 0], x[:, 1], s=10, c=prediction, cmap='rainbow')
-        plt.pause(0.1)
-plt.pause(3)
+# data = np.ones((data_num, 2)) #这里的二维是为了画图, 区分的数据本身可以是任意维度的
+#
+# x0 = np.random.normal(2, 1, data.shape)
+# x1 = np.random.normal(-2, 1, data.shape)
+# x2 = np.random.normal(6, 1, data.shape)
+#
+# x = np.vstack((x0, x1, x2)) #(300, 2)
+# y = np.hstack((np.zeros(data_num), np.ones(data_num), 2*np.ones(data_num)))  #(300, )
+#
+# # plt.scatter(x[:, 0], x[:, 1], s=10, c=y, cmap='rainbow')
+# # plt.show()
+#
+# #
+# # placeholder
+# xs = tf.placeholder(tf.float32, x.shape)
+# ys = tf.placeholder(tf.int32, y.shape)
+#
+# # # create layer
+# hidden = tf.layers.dense(xs, 10, tf.nn.relu)
+# output = tf.layers.dense(hidden, 3)  #因此要区分三类物体，因此有3个输出[0, 1, 2]
+#
+# # calculate loss
+# loss = tf.losses.sparse_softmax_cross_entropy(labels=ys, logits=output)
+# train = tf.train.GradientDescentOptimizer(0.1).minimize(loss)
+#
+# sess = tf.Session()
+# sess.run(tf.group(tf.global_variables_initializer()))
+# # sess.run(tf.group(tf.global_variables_initializer(), tf.local_variables_initializer()))
+#
+# for i in range(data_num):
+#     _, l, op = sess.run([train, loss, output], feed_dict={xs: x, ys: y})
+#
+#     if i % 50 == 0:
+#         print(l)
+#         prediction = sess.run(tf.argmax(op, axis=1))
+#         plt.cla()
+#         plt.scatter(x[:, 0], x[:, 1], s=10, c=prediction, cmap='rainbow')
+#         plt.pause(0.1)
+# plt.pause(3)
