@@ -7,11 +7,41 @@ np.random.seed(1)
 
 # fake data
 
-data = np.ones((100, 2))
+data = np.ones((1000, 2))
 
 x0 = np.random.normal(2, 1, data.shape)
+x1 = np.random.normal(-2, 1, data.shape)
+x2 = np.random.normal(6, 1, data.shape)
+x3 = np.random.normal(10, 1, data.shape)
 
-print(x0)
+x = np.vstack((x0, x1, x2, x3))  #(200, 2)
+y = np.hstack((np.ones(1000), np.zeros(1000), 2*np.ones(1000), 3*np.ones(1000))) # (200, )
+
+# plt.scatter(x[:, 0], x[:, 1], s=10, c=np.ones(200), cmap='rainbow')
+# plt.show()
+
+xs = tf.placeholder(tf.float32, x.shape)
+ys = tf.placeholder(tf.int32, y.shape) #label 只能是int32, int64
+
+# create graph
+hidden = tf.layers.dense(xs, 10, tf.nn.relu)
+output = tf.layers.dense(hidden, 4)
+
+loss = tf.losses.sparse_softmax_cross_entropy(labels=ys, logits=output)
+train = tf.train.GradientDescentOptimizer(0.05).minimize(loss)
+
+sess = tf.Session()
+sess.run(tf.global_variables_initializer())
+
+for i in range(1000):
+    _, l, pre = sess.run([train, loss, output], feed_dict={xs: x, ys: y})
+
+    print(l)
+    if i % 10 == 0:
+        plt.cla()
+        plt.scatter(x[:, 0], x[:, 1], s=10, c=np.argmax(pre, axis=1), cmap='rainbow')
+        plt.pause(0.1)
+plt.show()
 
 
 
