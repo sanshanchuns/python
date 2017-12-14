@@ -9,6 +9,7 @@ y = -x.pow(2) + 0.2*torch.normal(torch.zeros(x.size()))
 
 x, y = Variable(x), Variable(y)
 
+
 class Net(torch.nn.Module):
     def __init__(self):
         super(Net, self).__init__()
