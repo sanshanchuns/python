@@ -27,6 +27,8 @@ ys = tf.placeholder(tf.int32, y.shape) #label 只能是int32, int64
 hidden = tf.layers.dense(xs, 10, tf.nn.relu)
 output = tf.layers.dense(hidden, 4)
 
+# loss = tf.reduce_mean(-tf.reduce_sum(ys * tf.log(output), reduction_indices=[1]))
+# 这里的 ys 是 (200, ), 也就是 squeeze()过的, 没有了 列的维度, labels 是不带列这个维度的
 loss = tf.losses.sparse_softmax_cross_entropy(labels=ys, logits=output)
 train = tf.train.GradientDescentOptimizer(0.05).minimize(loss)
 
