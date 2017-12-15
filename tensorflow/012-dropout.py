@@ -12,6 +12,12 @@ y = digits.target
 y = LabelBinarizer().fit_transform(y)
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.3)
 
+# X_train, y_train  (1257, 64) (1257, 10)
+# X_test, y_test (540, 64) (540, 10)
+
+# print(X_train.shape, X_test.shape, y_train.shape, y_test.shape)
+print(X_train[0, :])
+print(y_train[0, :])
 
 def add_layer(inputs, in_size, out_size, layer_name, activation_function=None, ):
     # add one more layer and return the output of this layer

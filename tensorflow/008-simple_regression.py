@@ -8,8 +8,7 @@ np.random.seed(1)
 
 #fake data
 x = np.linspace(-1, 1, 300)[:, np.newaxis]
-x_train, x_test = np.split(x, 200) #数据分化成 train, test
-print(np.split(x, 200))
+x_train, x_test = np.split(x, [200]) #数据分化成 train, test
 y = np.power(x, 2) + np.random.normal(0, 0.05, x.shape)
 
 #placeholder
