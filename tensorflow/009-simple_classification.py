@@ -17,6 +17,7 @@ x3 = np.random.normal(10, 1, data.shape)
 x = np.vstack((x0, x1, x2, x3))  #(200, 2)
 y = np.hstack((np.ones(1000), np.zeros(1000), 2*np.ones(1000), 3*np.ones(1000))) # (200, )
 
+
 # plt.scatter(x[:, 0], x[:, 1], s=10, c=np.ones(200), cmap='rainbow')
 # plt.show()
 
@@ -27,22 +28,27 @@ ys = tf.placeholder(tf.int32, y.shape) #label 只能是int32, int64
 hidden = tf.layers.dense(xs, 10, tf.nn.relu)
 output = tf.layers.dense(hidden, 4)
 
-# loss = tf.reduce_mean(-tf.reduce_sum(ys * tf.log(output), reduction_indices=[1]))
-# 这里的 ys 是 (200, ), 也就是 squeeze()过的, 没有了 列的维度, labels 是不带列这个维度的
+# 这里的 ys 是 (200, ), 也就是 squeeze()过的 1D数据
 loss = tf.losses.sparse_softmax_cross_entropy(labels=ys, logits=output)
+# loss = tf.reduce_mean(-tf.reduce_sum(ys * tf.log(output), axis=1))
 train = tf.train.GradientDescentOptimizer(0.05).minimize(loss)
 
 sess = tf.Session()
 sess.run(tf.global_variables_initializer())
 
 for i in range(1000):
-    _, l, pre = sess.run([train, loss, output], feed_dict={xs: x, ys: y})
+    _, l, op = sess.run([train, loss, output], feed_dict={xs: x, ys: y})
 
     print(l)
-    if i % 10 == 0:
+    # if i == 99:
+    #     print(l)
+    #     print(ys.shape)
+    #     print(op)
+    #     print(np.argmax(op, axis=1))
+    if i % 50 == 0:
         plt.cla()
-        plt.scatter(x[:, 0], x[:, 1], s=10, c=np.argmax(pre, axis=1), cmap='rainbow')
-        plt.pause(0.1)
+        plt.scatter(x[:, 0], x[:, 1], s=10, c=np.argmax(op, axis=1), cmap='rainbow')
+        plt.pause(0.3)
 plt.show()
 
 
