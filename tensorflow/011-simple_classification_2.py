@@ -38,19 +38,26 @@ hidden = tf.layers.dense(xs, 784, tf.nn.relu)
 output = tf.layers.dense(hidden, 10, tf.nn.softmax)
 
 # the error between prediction and real data
-# loss = tf.reduce_mean(-tf.reduce_sum(ys * tf.log(output), axis=1))
-loss = tf.losses.sigmoid_cross_entropy(multi_class_labels=ys, logits=output)
+loss = tf.reduce_mean(-tf.reduce_sum(ys * tf.log(output), axis=1))
+# loss = tf.losses.softmax_cross_entropy(onehot_labels=ys, logits=output)
+# loss = tf.losses.sigmoid_cross_entropy(multi_class_labels=ys, logits=output)
 train_step = tf.train.GradientDescentOptimizer(0.5).minimize(loss)
 
 sess = tf.InteractiveSession()
 sess.run(tf.global_variables_initializer())
+loss_his = []
 
 for i in range(100):
     batch_xs, batch_ys = mnist.train.next_batch(100)
-    _, l, op = sess.run([train_step, loss, output], feed_dict={xs: batch_xs, ys: batch_ys})
-    if i == 99:
-        print(l)
-        print(batch_ys.shape)
-        print(op)
+    _, l, op = sess.run([train_step, loss, output],
+                        feed_dict={xs: batch_xs, ys: batch_ys})
+    loss_his.append(l)
+    print(l)
+    # if i == 99:
+    #     print(batch_ys.shape)
+    #     print(op)
         # print(np.argmax(op, axis=1))
         # print(np.argmax(batch_ys, axis=1))
+
+plt.plot(loss_his)
+plt.show()
