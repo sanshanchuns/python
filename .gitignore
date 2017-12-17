@@ -1,6 +1,7 @@
 tensorflow/logs
 .python-version
 mnist/
+MNIST_data/
 .idea/workspace.xml
 .idea/
 .DS_Store
