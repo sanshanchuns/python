@@ -34,8 +34,8 @@ test_y = mnist.test.labels[:BATCH_SIZE_TEST]
 #这里除以255没有意义，因为输入的数据都已经经过one_hot处理，非0即1
 # tf_x = tf.placeholder(tf.float32, [None, 28*28]) / 255.
 tf_x = tf.placeholder(tf.float32, [None, 28*28])
-image = tf.reshape(tf_x, [-1, 28, 28, 1])              # (batch, height, width, channel)
-tf_y = tf.placeholder(tf.int32, [None, 10])            # input y
+image = tf.reshape(tf_x, [-1, 28, 28, 1]) #
+tf_y = tf.placeholder(tf.int32, [None, 10])
 
 # CNN
 conv1 = tf.layers.conv2d(   # shape (28, 28, 1)
