@@ -8,6 +8,7 @@ import tensorflow as tf
 IMAGE_HEIGHT = 60
 IMAGE_WIDTH = 160
 MAX_CAPTCHA = 4
+BATCH_SIZE = 20
 
 # 验证码中的字符, 就不用汉字了
 number = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
@@ -109,6 +110,13 @@ def vec2text(vec):
         txt.append(chr(char_code))
     return "".join(txt)
 
+
+def index2text(index):
+    txt = []
+    for i, idx in enumerate(index):
+        txt.append(CHAR_SET[idx])
+    return ''.join(txt)
+
 """
 #向量（大小MAX_CAPTCHA*CHAR_SET_LEN）用0,1编码 每63个编码一个字符，这样顺利有，字符也有
 vec = text2vec("F5Sd")
@@ -121,7 +129,7 @@ print(text)  # SFd5
 
 
 # 生成一个训练batch
-def next_batch(batch_size=20):
+def next_batch(batch_size=20, number_only=False):
     batch_x = np.zeros([batch_size, IMAGE_HEIGHT * IMAGE_WIDTH])
     batch_y = np.zeros([batch_size, MAX_CAPTCHA * CHAR_SET_LEN])
 
@@ -148,8 +156,10 @@ ys = tf.placeholder(tf.float32, [None, MAX_CAPTCHA * CHAR_SET_LEN])
 
 def crack_captcha_cnn():
     c1 = tf.layers.conv2d(xs_4d, 16, 5, 1, 'same', activation=tf.nn.relu)  # -> 60*160*16
+    c1 = tf.layers.dropout(c1, rate=0.5)
     p1 = tf.layers.max_pooling2d(c1, 2, 2)  # -> 30*80*16
     c2 = tf.layers.conv2d(p1, 32, 5, 1, 'same', activation=tf.nn.relu)  # -> 30*80*32
+    c2 = tf.layers.dropout(c2, rate=0.5)
     p2 = tf.layers.max_pooling2d(c2, 2, 2)  # -> 15*40*32
     output = tf.layers.dense(tf.reshape(p2, [-1, 15 * 40 * 32]), MAX_CAPTCHA * CHAR_SET_LEN)
     return output
@@ -158,21 +168,26 @@ def crack_captcha_cnn():
 def train_crack_captcha_cnn():
     output = crack_captcha_cnn()
 
-    loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=ys, logits=output))
+    #ys (20, 252) -> (1, 4, 63)
+    # loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=ys, logits=output))
+    loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(labels=ys, logits=output))
     train = tf.train.AdamOptimizer(0.001).minimize(loss)
 
+    saver = tf.train.Saver()
     sess = tf.Session()
     sess.run(tf.global_variables_initializer())
 
-    for i in range(100):
-        b_x, b_y = next_batch()
+    for i in range(10000):
+        b_x, b_y = next_batch(BATCH_SIZE)
         sess.run([train], feed_dict={xs: b_x, ys: b_y})
-        if i % 10 == 0:
-            t_x, t_y = next_batch()
+        if i % 100 == 0:
+            t_x, t_y = next_batch(BATCH_SIZE)
             l, op = sess.run([loss, output], feed_dict={xs: t_x, ys: t_y})
-            print(l)
-
-            print(np.argmax(op[0, :].reshape(4, 63), 0))
+            if (l < 0.3):
+                print(l)
+                saver.save(sess, 'captcha.model', global_step=i)
+            index = np.argmax(op[0, :].reshape(4, 63), 1)
+            print(index2text(index))
             print(vec2text(t_y[0, :]))
 
 
