@@ -28,8 +28,11 @@ def random_captcha_text(char_set=CHAR_SET, char_size=MAX_CAPTCHA):
     return captcha_text
 
 
-def gen_captcha_text_and_image():
-    captcha_text = random_captcha_text()
+def gen_captcha_text_and_image(number_only=False):
+    char_set = CHAR_SET
+    if number_only:
+        char_set = number
+    captcha_text = random_captcha_text(char_set)
     captcha_text = ''.join(captcha_text)
 
     captcha_image = ImageCaptcha().generate_image(captcha_text) #实例方法
@@ -136,7 +139,7 @@ def next_batch(batch_size=20, number_only=False):
     # 有时生成图像大小不是(60, 160, 3)
     def wrap_gen_captcha_text_and_image():
         while True:
-            text, image = gen_captcha_text_and_image()
+            text, image = gen_captcha_text_and_image(number_only)
             if image.shape == (60, 160, 3):
                 return text, image
 
@@ -168,24 +171,24 @@ def crack_captcha_cnn():
 def train_crack_captcha_cnn():
     output = crack_captcha_cnn()
 
-    #ys (20, 252) -> (1, 4, 63)
+    #ys (20, 252) -> (1, 4, 63)   output (20, 252)
     # loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=ys, logits=output))
     loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(labels=ys, logits=output))
     train = tf.train.AdamOptimizer(0.001).minimize(loss)
 
-    saver = tf.train.Saver()
     sess = tf.Session()
     sess.run(tf.global_variables_initializer())
+    saver = tf.train.Saver()  # define a saver for saving and restoring
 
     for i in range(10000):
         b_x, b_y = next_batch(BATCH_SIZE)
         sess.run([train], feed_dict={xs: b_x, ys: b_y})
         if i % 100 == 0:
-            t_x, t_y = next_batch(BATCH_SIZE)
+            t_x, t_y = next_batch(BATCH_SIZE, number_only=True)
             l, op = sess.run([loss, output], feed_dict={xs: t_x, ys: t_y})
-            if (l < 0.3):
-                print(l)
-                saver.save(sess, 'captcha.model', global_step=i)
+            print(l)
+            if l < 0.03:
+                saver.save(sess, './cnn_params/', write_meta_graph=False)  # meta_graph is not recommended
             index = np.argmax(op[0, :].reshape(4, 63), 1)
             print(index2text(index))
             print(vec2text(t_y[0, :]))
