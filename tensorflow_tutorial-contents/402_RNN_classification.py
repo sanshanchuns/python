@@ -20,6 +20,7 @@ BATCH_SIZE = 64
 TIME_STEP = 28          # rnn time step / image height
 INPUT_SIZE = 28         # rnn input size / image width
 LR = 0.01               # learning rate
+CHAR_SET_LEN = 10       # chat set length
 
 # data
 mnist = input_data.read_data_sets('./mnist', one_hot=True)              # they has been normalized to range (0,1)
@@ -27,16 +28,16 @@ test_x = mnist.test.images[:2000]
 test_y = mnist.test.labels[:2000]
 
 # plot one example
-print(mnist.train.images.shape)     # (55000, 28 * 28)
-print(mnist.train.labels.shape)   # (55000, 10)
-plt.imshow(mnist.train.images[0].reshape((28, 28)), cmap='gray')
-plt.title('%i' % np.argmax(mnist.train.labels[0]))
-plt.show()
+# print(mnist.train.images.shape)     # (55000, 28 * 28)
+# print(mnist.train.labels.shape)   # (55000, 10)
+# plt.imshow(mnist.train.images[0].reshape((28, 28)), cmap='gray')
+# plt.title('%i' % np.argmax(mnist.train.labels[0]))
+# plt.show()
 
 # tensorflow placeholders
 tf_x = tf.placeholder(tf.float32, [None, TIME_STEP * INPUT_SIZE])       # shape(batch, 784)
 image = tf.reshape(tf_x, [-1, TIME_STEP, INPUT_SIZE])                   # (batch, height, width, channel)
-tf_y = tf.placeholder(tf.int32, [None, 10])                             # input y
+tf_y = tf.placeholder(tf.int32, [None, 1*CHAR_SET_LEN])                             # input y
 
 # RNN
 rnn_cell = tf.contrib.rnn.BasicLSTMCell(num_units=64)

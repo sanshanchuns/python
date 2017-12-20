@@ -4,11 +4,13 @@ import numpy as np
 import random
 from PIL import Image
 import tensorflow as tf
+from pathlib import Path
 
 IMAGE_HEIGHT = 60
 IMAGE_WIDTH = 160
 MAX_CAPTCHA = 4
 BATCH_SIZE = 20
+LR = 0.001
 
 # 验证码中的字符, 就不用汉字了
 number = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
@@ -164,7 +166,10 @@ def crack_captcha_cnn():
     c2 = tf.layers.conv2d(p1, 32, 5, 1, 'same', activation=tf.nn.relu)  # -> 30*80*32
     c2 = tf.layers.dropout(c2, rate=0.5)
     p2 = tf.layers.max_pooling2d(c2, 2, 2)  # -> 15*40*32
-    output = tf.layers.dense(tf.reshape(p2, [-1, 15 * 40 * 32]), MAX_CAPTCHA * CHAR_SET_LEN)
+    c3 = tf.layers.conv2d(p2, 64, 5, 1, 'same', activation=tf.nn.relu)  # -> 15*40*64
+    c3 = tf.layers.dropout(c3, rate=0.5)
+    p3 = tf.layers.max_pooling2d(c3, 2, 2) # -> 15*40*64
+    output = tf.layers.dense(tf.reshape(p3, [-1, 7 * 20 * 64]), MAX_CAPTCHA * CHAR_SET_LEN)
     return output
 
 
@@ -174,64 +179,47 @@ def train_crack_captcha_cnn():
     #ys (20, 252) -> (1, 4, 63)   output (20, 252)
     # loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=ys, logits=output))
     loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(labels=ys, logits=output))
-    train = tf.train.AdamOptimizer(0.001).minimize(loss)
+    accuracy = tf.metrics.accuracy(labels=tf.argmax(ys, 1), predictions=tf.argmax(output, 1))[1]
+    train = tf.train.AdamOptimizer(LR).minimize(loss)
 
     sess = tf.Session()
-    sess.run(tf.global_variables_initializer())
     saver = tf.train.Saver()  # define a saver for saving and restoring
+    sess.run(tf.group(tf.global_variables_initializer(), tf.local_variables_initializer()))
 
-    for i in range(10000):
-        b_x, b_y = next_batch(BATCH_SIZE)
-        sess.run([train], feed_dict={xs: b_x, ys: b_y})
-        if i % 100 == 0:
-            t_x, t_y = next_batch(BATCH_SIZE, number_only=True)
-            l, op = sess.run([loss, output], feed_dict={xs: t_x, ys: t_y})
-            print(l)
-            if l < 0.03:
-                saver.save(sess, './cnn_params/', write_meta_graph=False)  # meta_graph is not recommended
-            index = np.argmax(op[0, :].reshape(4, 63), 1)
-            print(index2text(index))
-            print(vec2text(t_y[0, :]))
+    file_path = './cnn_params/'
+    if Path(file_path).exists():
+        saver.restore(sess, file_path)
+        print('restore')
 
+        for i in range(10000):
+            b_x, b_y = next_batch(BATCH_SIZE)
+            sess.run([train], feed_dict={xs: b_x, ys: b_y})
+            if i % 100 == 0:
+                t_x, t_y = next_batch(BATCH_SIZE)
+                l, op, ac = sess.run([loss, output, accuracy], feed_dict={xs: t_x, ys: t_y})
+                print(i, l, ac)
+                if l < 0.01:
+                    print('resave')
+                    saver.save(sess, './cnn_params/', write_meta_graph=False)  # meta_graph is not recommended
+                index = np.argmax(op[0, :].reshape(4, 63), 1)
+                print(index2text(index))
+                print(vec2text(t_y[0, :]))
 
+    else:
 
-
-
-
-    # loss
-    # loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=ys, logits=output))
-    # loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=output, labels=Y))
-    # 最后一层用来分类的softmax和sigmoid有什么不同？
-    # optimizer 为了加快训练 learning_rate应该开始大，然后慢慢衰
-    # optimizer = tf.train.AdamOptimizer(learning_rate=0.001).minimize(loss)
-    #
-    # predict = tf.reshape(output, [-1, MAX_CAPTCHA, CHAR_SET_LEN])
-    # max_idx_p = tf.argmax(predict, 2)
-    # max_idx_l = tf.argmax(tf.reshape(ys, [-1, MAX_CAPTCHA, CHAR_SET_LEN]), 2)
-    # correct_pred = tf.equal(max_idx_p, max_idx_l)
-    # accuracy = tf.reduce_mean(tf.cast(correct_pred, tf.float32))
-    #
-    # saver = tf.train.Saver()
-    # with tf.Session() as sess:
-    #     sess.run(tf.global_variables_initializer())
-    #
-    #     step = 0
-    #     while True:
-    #         batch_x, batch_y = next_batch(64)
-    #         _, loss_ = sess.run([optimizer, loss], feed_dict={xs: batch_x, ys: batch_y})
-    #         print(step, loss_)
-    #
-    #         # 每100 step计算一次准确率
-    #         if step % 100 == 0:
-    #             batch_x_test, batch_y_test = next_batch(100)
-    #             acc = sess.run(accuracy, feed_dict={xs: batch_x_test, ys: batch_y_test})
-    #             print(step, acc)
-    #             # 如果准确率大于50%,保存模型,完成训练
-    #             if acc > 0.5:
-    #                 saver.save(sess, "crack_capcha.model", global_step=step)
-    #                 break
-    #
-    #         step += 1
+        for i in range(10000):
+            b_x, b_y = next_batch(BATCH_SIZE)
+            sess.run([train], feed_dict={xs: b_x, ys: b_y})
+            if i % 100 == 0:
+                t_x, t_y = next_batch(BATCH_SIZE, number_only=True)
+                l, op, ac = sess.run([loss, output, accuracy], feed_dict={xs: t_x, ys: t_y})
+                print(i, l, ac)
+                if l < 0.03:
+                    print('save')
+                    saver.save(sess, './cnn_params/', write_meta_graph=False)  # meta_graph is not recommended
+                index = np.argmax(op[0, :].reshape(4, 63), 1)
+                print(index2text(index))
+                print(vec2text(t_y[0, :]))
 
 
 if __name__ == '__main__':
@@ -247,21 +235,4 @@ if __name__ == '__main__':
     # plt.show()
 
     train_crack_captcha_cnn()
-
-    # train = tf.train.AdamOptimizer(0.01).minimize(loss)
-    #
-    # sess = tf.Session()
-    # sess.run(tf.global_variables_initializer())
-    #
-    # for i in range(100):
-    #     b_x, b_y = next_batch()
-    #     sess.run([train], feed_dict={xs: b_x, ys: b_y})
-    #
-    #     if i % 10 == 0:
-    #         t_x, t_y = next_batch()
-    #         l, op = sess.run([loss, output], feed_dict={xs: t_x, ys: t_y})
-    #         print(l)
-    #         # print(op.shape, t_y.shape) #(20, 252) (20, 252)
-    #         print(vec2text(np.argmax(op[0, :], 1)))
-    #         print(vec2text(t_y[0, :]))
 
