@@ -26,6 +26,7 @@ outputs, _ = tf.nn.dynamic_rnn(
     time_major=False,
     dtype=tf.float32,
 )
+# print(outputs) # shape(?, 28, 64)
 output = tf.layers.dense(outputs[:, -1, :], MAX_CAPTCHA*CHAR_SET_LENGTH)
 
 loss = tf.losses.softmax_cross_entropy(onehot_labels=ys, logits=output)

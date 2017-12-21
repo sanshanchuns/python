@@ -19,10 +19,13 @@ CELL_SIZE = 32      # rnn cell size
 LR = 0.02           # learning rate
 
 # show data
-steps = np.linspace(0, np.pi*2, 100, dtype=np.float32)
-x_np = np.sin(steps); y_np = np.cos(steps)    # float32 for converting torch FloatTensor
-plt.plot(steps, y_np, 'r-', label='target (cos)'); plt.plot(steps, x_np, 'b-', label='input (sin)')
-plt.legend(loc='best'); plt.show()
+# steps = np.linspace(0, np.pi*2, 100, dtype=np.float32)
+# x_np = np.sin(steps)
+# y_np = np.cos(steps)    # float32 for converting torch FloatTensor
+# plt.plot(steps, y_np, 'r-', label='target (cos)')
+# plt.plot(steps, x_np, 'b-', label='input (sin)')
+# plt.legend(loc='best')
+# plt.show()
 
 # tensorflow placeholders
 tf_x = tf.placeholder(tf.float32, [None, TIME_STEP, INPUT_SIZE])        # shape(batch, 5, 1)

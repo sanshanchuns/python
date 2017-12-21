@@ -1,3 +1,5 @@
+# RNN 不适合做图片分析
+
 import matplotlib.pyplot as plt
 import tensorflow as tf
 from pathlib import Path
@@ -12,7 +14,7 @@ MAX_CAPTCHA = 4
 CHAR_SET_LEN = 63  #(10 + 26 + 26 + 1)
 
 xs = tf.placeholder(tf.float32, [None, TIME_STEP*INPUT_SIZE])
-xs_2d = tf.reshape(xs, [-1, TIME_STEP, INPUT_SIZE])
+xs_2d = tf.reshape(xs, [-1, TIME_STEP, INPUT_SIZE]) #rnn的cell之前要过一个线性layer
 ys = tf.placeholder(tf.float32, [None, MAX_CAPTCHA*CHAR_SET_LEN])
 
 outputs, _ = tf.nn.dynamic_rnn(
@@ -22,6 +24,7 @@ outputs, _ = tf.nn.dynamic_rnn(
     dtype=tf.float32,
     time_major=False,
 )
+# -1 表示取每个结果的最后一行时间序列
 output = tf.layers.dense(outputs[:, -1, :], MAX_CAPTCHA*CHAR_SET_LEN)
 
 loss = tf.losses.sigmoid_cross_entropy(multi_class_labels=ys, logits=output)
