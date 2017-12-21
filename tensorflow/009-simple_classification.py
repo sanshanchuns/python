@@ -30,7 +30,6 @@ output = tf.layers.dense(hidden, 4)
 
 # 这里的 ys 是 (200, ), 也就是 squeeze()过的 1D数据
 loss = tf.losses.sparse_softmax_cross_entropy(labels=ys, logits=output)
-# loss = tf.reduce_mean(-tf.reduce_sum(ys * tf.log(output), axis=1))
 train = tf.train.GradientDescentOptimizer(0.05).minimize(loss)
 
 sess = tf.Session()

@@ -48,6 +48,7 @@ outputs, (h_c, h_n) = tf.nn.dynamic_rnn(
     dtype=tf.float32,           # must given if set initial_state = None
     time_major=False,           # False: (batch, time step, input); True: (time step, batch, input)
 )
+#Tensor("rnn/transpose:0", shape=(?, 28, 64), dtype=float32)
 output = tf.layers.dense(outputs[:, -1, :], 10)              # output based on the last output step
 
 loss = tf.losses.softmax_cross_entropy(onehot_labels=tf_y, logits=output)           # compute cost

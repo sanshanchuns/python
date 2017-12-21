@@ -37,7 +37,7 @@ train = tf.train.AdamOptimizer(LR).minimize(loss)
 sess = tf.InteractiveSession()
 sess.run(tf.group(tf.global_variables_initializer(), tf.local_variables_initializer()))
 
-losses_his = []
+accuracy_his = []
 
 for step in range(1001):
     b_x, b_y = mnist.train.next_batch(BATCH_SIZE)
@@ -46,12 +46,11 @@ for step in range(1001):
     if step % 50 == 0:
         test_x, test_y = mnist.test.next_batch(BATCH_SIZE_TEST)
         l, op, ac = sess.run([loss, output, accuracy], feed_dict={xs: test_x, ys: test_y})
-        losses_his.append(l)
-        print(l)
-        print(ac)
-        print(test_y.shape)
-        print(np.argmax(test_y, 1))
-        print(np.argmax(op, 1))
+        accuracy_his.append(ac)
+        # print(l, ac)
+        # print(np.argmax(test_y, 1))
+        # print(np.argmax(op, 1))
 
-# plt.plot(losses_his)
-# plt.show()
+plt.plot(accuracy_his)
+plt.ylim((0.5, 1))
+plt.show()
