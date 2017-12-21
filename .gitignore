@@ -5,3 +5,5 @@ MNIST_data/
 .idea/workspace.xml
 .idea/
 .DS_Store
+__pycache__
+*.pyc

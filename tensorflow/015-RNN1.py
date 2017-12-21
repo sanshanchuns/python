@@ -44,22 +44,14 @@ for i in range(1000):
         t_x, t_y = mnist.test.next_batch(BATCH_SIZE)
         l, op, ac = sess.run([loss, output, accuracy], feed_dict={xs: t_x, ys: t_y})
         accuracy_his.append(ac)
+        print(ac)
+        print(np.argmax(op, 1))
+        print(np.argmax(t_y, 1))
+
 
 plt.plot(accuracy_his)
 plt.ylim((0.5, 1))
 plt.show()
-
-
-
-
-
-
-
-
-
-
-
-
 
 # mnist = input_data.read_data_sets('./mnist', one_hot=True)
 
