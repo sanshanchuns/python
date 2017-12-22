@@ -40,17 +40,21 @@ outputs, final_s = tf.nn.dynamic_rnn(
     initial_state=init_s,       # the initial hidden state
     time_major=False,           # False: (batch, time step, input); True: (time step, batch, input)
 )
+# print(outputs) # shape=(1, 10, 32)
 outs2D = tf.reshape(outputs, [-1, CELL_SIZE])                       # reshape 3D output to 2D for fully connected layer
 net_outs2D = tf.layers.dense(outs2D, INPUT_SIZE)
 outs = tf.reshape(net_outs2D, [-1, TIME_STEP, INPUT_SIZE])          # reshape back to 3D
+# print(outs) # shape=(1, 10, 1)
 
 loss = tf.losses.mean_squared_error(labels=tf_y, predictions=outs)  # compute cost
 train_op = tf.train.AdamOptimizer(LR).minimize(loss)
+accuracy = tf.metrics.accuracy(labels=tf.argmax(tf_y, 1), predictions=tf.argmax(outs, 1))[1]
 
 sess = tf.Session()
-sess.run(tf.global_variables_initializer())     # initialize var in graph
+sess.run(tf.group(tf.global_variables_initializer(), tf.local_variables_initializer()))     # initialize var in graph
 
-plt.figure(1, figsize=(12, 5)); plt.ion()       # continuously plot
+plt.figure(1, figsize=(12, 5))
+plt.ion()       # continuously plot
 
 for step in range(60):
     start, end = step * np.pi, (step+1)*np.pi   # time range
@@ -62,10 +66,15 @@ for step in range(60):
         feed_dict = {tf_x: x, tf_y: y}
     else:                                           # has hidden state, so pass it to rnn
         feed_dict = {tf_x: x, tf_y: y, init_s: final_s_}
-    _, pred_, final_s_ = sess.run([train_op, outs, final_s], feed_dict)     # train
+    _, pred_, ac, l, final_s_ = sess.run([train_op, outs, accuracy, loss, final_s], feed_dict)     # train
 
+    print(l, ac)
     # plotting
-    plt.plot(steps, y.flatten(), 'r-'); plt.plot(steps, pred_.flatten(), 'b-')
-    plt.ylim((-1.2, 1.2)); plt.draw(); plt.pause(0.05)
+    plt.plot(steps, y.flatten(), 'r-')
+    plt.plot(steps, pred_.flatten(), 'b-')
+    plt.ylim((-1.2, 1.2))
+    plt.draw()
+    plt.pause(0.05)
 
-plt.ioff(); plt.show()
+plt.ioff()
+plt.show()

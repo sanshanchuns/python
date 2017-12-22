@@ -9,13 +9,17 @@ x = np.random.rand(2, 2, 2)
 # print(x.flatten())
 import tensorflow as tf
 
-ty = tf.placeholder(tf.float32, [None, 10])
-output = tf.layers.dense(10, 10)
+step = 1
+start, end = step * np.pi, (step+1)*np.pi   # time range
+# use sin predicts cos
+steps = np.linspace(start, end, 10)
+x = np.sin(steps)[np.newaxis, :, np.newaxis]    # shape (batch, time_step, input_size)
+y = np.cos(steps)[np.newaxis, :, np.newaxis]
 
-accuracy = tf.metrics.accuracy(labels=tf.argmax(ty, 1), predictions=tf.argmax(output, 1))[1]
-
+print(np.sin(steps))
+print(np.cos(steps))
 print(x)
-print(np.argmax(x))
+print(y)
 
 
 

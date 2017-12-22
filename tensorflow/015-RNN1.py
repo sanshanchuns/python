@@ -13,7 +13,7 @@ BATCH_SIZE = 32
 mnist = input_data.read_data_sets('./mnist', one_hot=True)
 
 xs = tf.placeholder(tf.float32, [None, TIME_STEP*INPUT_SIZE])
-xs_2d = tf.reshape(xs, [-1, TIME_STEP, INPUT_SIZE])
+xs_3d = tf.reshape(xs, [-1, TIME_STEP, INPUT_SIZE])
 ys = tf.placeholder(tf.float32, [None, MAX_CAPTCHA*CHAR_SET_LENGTH])
 
 # time_major
@@ -21,12 +21,13 @@ ys = tf.placeholder(tf.float32, [None, MAX_CAPTCHA*CHAR_SET_LENGTH])
 # If false, these `Tensors` must be shaped `[batch_size, max_time, depth]`.
 outputs, _ = tf.nn.dynamic_rnn(
     cell=tf.nn.rnn_cell.BasicLSTMCell(64), #输出64
-    inputs=xs_2d,
+    inputs=xs_3d,
     initial_state=None,
     time_major=False,
     dtype=tf.float32,
 )
 # print(outputs) # shape(?, 28, 64)
+# print(output) # shape(?, 1*10)
 output = tf.layers.dense(outputs[:, -1, :], MAX_CAPTCHA*CHAR_SET_LENGTH)
 
 loss = tf.losses.softmax_cross_entropy(onehot_labels=ys, logits=output)
@@ -45,7 +46,7 @@ for i in range(1000):
         t_x, t_y = mnist.test.next_batch(BATCH_SIZE)
         l, op, ac = sess.run([loss, output, accuracy], feed_dict={xs: t_x, ys: t_y})
         accuracy_his.append(ac)
-        print(ac)
+        print(l, ac)
         print(np.argmax(op, 1))
         print(np.argmax(t_y, 1))
 
