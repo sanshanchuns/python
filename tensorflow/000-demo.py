@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 
 x = np.random.rand(2, 2, 2)
 # r, g, b = x[:,:,0], x[:,:,1], x[:,:,2]
@@ -9,17 +10,16 @@ x = np.random.rand(2, 2, 2)
 # print(x.flatten())
 import tensorflow as tf
 
-step = 1
-start, end = step * np.pi, (step+1)*np.pi   # time range
+steps = np.linspace(0, np.pi*2, 100, dtype=np.float32)
 # use sin predicts cos
-steps = np.linspace(start, end, 10)
-x = np.sin(steps)[np.newaxis, :, np.newaxis]    # shape (batch, time_step, input_size)
-y = np.cos(steps)[np.newaxis, :, np.newaxis]
+x = np.sin(steps)    # shape (batch, time_step, input_size)
+y = np.cos(steps)
+z = np.tan(steps)
 
-print(np.sin(steps))
-print(np.cos(steps))
-print(x)
-print(y)
+plt.plot(x)
+plt.plot(y)
+plt.plot(z)
+plt.show()
 
 
 
