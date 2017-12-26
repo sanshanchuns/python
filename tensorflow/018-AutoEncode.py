@@ -44,19 +44,19 @@ for i in range(COMPARE_COLS):
     a[0][i].set_yticks(())
 
 dir_path = './auto_encode_params/'
-if os.path.isfile(dir_path):
+if os.listdir(dir_path):
     print('restore')
     saver.restore(sess, dir_path)
 
 # plt.show()
-for step in range(8000):
+for step in range(10000):
     x, _ = mnist.train.next_batch(BATCH_SIZE)
     l, ac, _, en, de = sess.run([loss, accuracy, train, encoded, decoded], feed_dict={xs: x})
 
     if step % 100 == 0:
-        print(l, ac)
+        print(step, l, ac)
 
-        if ac > 0.011:
+        if ac > 0.016:
             print('save')
             saver.save(sess, dir_path, write_meta_graph=False)
 
