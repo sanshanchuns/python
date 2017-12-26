@@ -1,56 +1,63 @@
 import tensorflow as tf
+import tensorflow.examples.tutorials.mnist.input_data as input_data
 import numpy as np
 import matplotlib.pyplot as plt
-import tensorflow.examples.tutorials.mnist.input_data as input_data
 
-tf.set_random_seed(1)
-
-BATCH_SIZE = 64
-EPOCH = 8000
 LR = 0.002
-N_TEST_IMG = 5
+COMPARE_COLS = 5
+BATCH_SIZE = 64
 
 mnist = input_data.read_data_sets('./mnist', one_hot=True)
 
 xs = tf.placeholder(tf.float32, [None, 28*28])
 
-l1 = tf.layers.dense(xs, 128, tf.nn.tanh)
-l2 = tf.layers.dense(l1, 64, tf.nn.tanh)
-l3 = tf.layers.dense(l2, 12, tf.nn.tanh)
-encode = tf.layers.dense(l3, 3)
+ACTI = tf.nn.tanh
 
-l3 = tf.layers.dense(encode, 12, tf.nn.tanh)
-l4 = tf.layers.dense(l3, 64, tf.nn.tanh)
-l5 = tf.layers.dense(l4, 128, tf.nn.tanh)
-decode = tf.layers.dense(l5, 28*28, tf.nn.sigmoid)
+e0 = tf.layers.dense(xs, 256, ACTI)
+e1 = tf.layers.dense(e0, 64, ACTI)
+e2 = tf.layers.dense(e1, 32, ACTI)
+encoded = tf.layers.dense(e2, 2)
 
-loss = tf.losses.mean_squared_error(labels=xs, predictions=decode)
+d0 = tf.layers.dense(encoded, 32, ACTI)
+d1 = tf.layers.dense(d0, 64, ACTI)
+d2 = tf.layers.dense(d1, 256, ACTI)
+decoded = tf.layers.dense(d2, 28*28, tf.nn.sigmoid)
+
+loss = tf.losses.mean_squared_error(labels=xs, predictions=decoded)
 train = tf.train.AdamOptimizer(LR).minimize(loss)
-accuracy = tf.metrics.accuracy(labels=tf.argmax(xs, 1), predictions=tf.argmax(decode, 1))[1]
+accuracy = tf.metrics.accuracy(labels=tf.argmax(xs, 1), predictions=tf.argmax(decoded, 1))[1]
 
 sess = tf.Session()
 sess.run(tf.group(tf.global_variables_initializer(), tf.local_variables_initializer()))
 
-f, a = plt.subplots(2, N_TEST_IMG, figsize=(5, 2))
-view_data = mnist.test.images[:N_TEST_IMG] #前5个数据
+test_images = mnist.test.images[:COMPARE_COLS]
+test_lables = mnist.test.labels[:COMPARE_COLS]
 
-# original data (first row) for viewing
-for i in range(N_TEST_IMG):
-    a[0][i].imshow(np.reshape(view_data[i], (28, 28)), cmap='rainbow')
+f, a = plt.subplots(2, COMPARE_COLS, figsize=(5, 2))
+
+for i in range(COMPARE_COLS):
+    a[0][i].imshow(test_images[i].reshape(28, 28), cmap='rainbow')
     a[0][i].set_xticks(())
     a[0][i].set_yticks(())
 
-for step in range(EPOCH):
-    b_x, _ = mnist.train.next_batch(BATCH_SIZE)
-    _, l, ac, en, de = sess.run([train, loss, accuracy, encode, decode], feed_dict={xs: b_x})
+# plt.show()
+for step in range(1000):
+    x, _ = mnist.train.next_batch(BATCH_SIZE)
+    l, ac, _, en, de = sess.run([loss, accuracy, train, encoded, decoded], feed_dict={xs: x})
 
     if step % 100 == 0:
         print(l, ac)
-        decode_output = sess.run([decode], feed_dict={xs: view_data})
-        print(decode_output)
-        for i in range(N_TEST_IMG):
-            a[1][i].clear()
-            a[1][i].imshow(np.reshape(decode_output[i], (28, 28)), cmap='rainbow')
+
+        output = sess.run(decoded, feed_dict={xs: test_images})
+        for i in range(COMPARE_COLS):
+            a[1][i].imshow(output[i].reshape(28, 28), cmap='rainbow')
             a[1][i].set_xticks(())
             a[1][i].set_yticks(())
-            plt.pause(0.01)
+        plt.pause(0.5)
+# plt.show()
+
+encoded_result = sess.run(encoded, feed_dict={xs: test_images})
+print(encoded_result.shape)
+plt.scatter(encoded_result[:, 0], encoded_result[:, 1], c=test_lables)
+plt.colorbar()
+plt.show()
