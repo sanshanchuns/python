@@ -27,11 +27,11 @@ test_x = mnist.test.images[:200]
 test_y = mnist.test.labels[:200]
 
 # plot one example
-print(mnist.train.images.shape)     # (55000, 28 * 28)
-print(mnist.train.labels.shape)     # (55000, 10)
-plt.imshow(mnist.train.images[0].reshape((28, 28)), cmap='gray')
-plt.title('%i' % np.argmax(mnist.train.labels[0]))
-plt.show()
+# print(mnist.train.images.shape)     # (55000, 28 * 28)
+# print(mnist.train.labels.shape)     # (55000, 10)
+# plt.imshow(mnist.train.images[0].reshape((28, 28)), cmap='gray')
+# plt.title('%i' % np.argmax(mnist.train.labels[0]))
+# plt.show()
 
 # tf placeholder
 tf_x = tf.placeholder(tf.float32, [None, 28*28])    # value in the range of (0, 1)
@@ -64,7 +64,7 @@ for i in range(N_TEST_IMG):
     a[0][i].imshow(np.reshape(view_data[i], (28, 28)), cmap='gray')
     a[0][i].set_xticks(()); a[0][i].set_yticks(())
 
-for step in range(8000):
+for step in range(1000):
     b_x, b_y = mnist.train.next_batch(BATCH_SIZE)
     _, encoded_, decoded_, loss_ = sess.run([train, encoded, decoded, loss], {tf_x: b_x})
 
@@ -80,8 +80,7 @@ for step in range(8000):
 plt.ioff()
 
 # visualize in 3D plot
-view_data = test_x[:200]
-encoded_data = sess.run(encoded, {tf_x: view_data})
+encoded_data = sess.run(encoded, {tf_x: test_x})
 fig = plt.figure(2); ax = Axes3D(fig)
 X, Y, Z = encoded_data[:, 0], encoded_data[:, 1], encoded_data[:, 2]
 for x, y, z, s in zip(X, Y, Z, test_y):
