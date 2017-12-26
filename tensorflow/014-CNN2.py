@@ -58,7 +58,7 @@ def train_cnn():
                 print(i, l, ac)
                 if l < 0.01:
                     print('resave')
-                    saver.save(sess, './cnn_params/', write_meta_graph=False)  # meta_graph is not recommended
+                    saver.save(sess, file_path, write_meta_graph=False)  # meta_graph is not recommended
                 op_index = np.argmax(op[0, :].reshape(4, 63), 1)
                 print(dataset.index2text(op_index))
                 print(dataset.vec2text(t_y[0, :]))
@@ -74,7 +74,7 @@ def train_cnn():
                 print(i, l, ac)
                 if l < 0.03:
                     print('save')
-                    saver.save(sess, './cnn_params/', write_meta_graph=False)  # meta_graph is not recommended
+                    saver.save(sess, file_path, write_meta_graph=False)  # meta_graph is not recommended
                 op_index = np.argmax(op[0, :].reshape(4, 63), 1)
                 print(dataset.index2text(op_index))
                 print(dataset.vec2text(t_y[0, :]))

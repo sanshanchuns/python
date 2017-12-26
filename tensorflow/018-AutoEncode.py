@@ -1,6 +1,7 @@
 import tensorflow as tf
 import tensorflow.examples.tutorials.mnist.input_data as input_data
 import numpy as np
+import os
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
@@ -31,6 +32,7 @@ accuracy = tf.metrics.accuracy(labels=tf.argmax(xs, 1), predictions=tf.argmax(de
 
 sess = tf.Session()
 sess.run(tf.group(tf.global_variables_initializer(), tf.local_variables_initializer()))
+saver = tf.train.Saver()
 
 view_data = mnist.test.images[:COMPARE_COLS]
 
@@ -41,13 +43,22 @@ for i in range(COMPARE_COLS):
     a[0][i].set_xticks(())
     a[0][i].set_yticks(())
 
+dir_path = './auto_encode_params/'
+if os.path.isfile(dir_path):
+    print('restore')
+    saver.restore(sess, dir_path)
+
 # plt.show()
-for step in range(1000):
+for step in range(8000):
     x, _ = mnist.train.next_batch(BATCH_SIZE)
     l, ac, _, en, de = sess.run([loss, accuracy, train, encoded, decoded], feed_dict={xs: x})
 
     if step % 100 == 0:
         print(l, ac)
+
+        if ac > 0.011:
+            print('save')
+            saver.save(sess, dir_path, write_meta_graph=False)
 
         decoded_data = sess.run(decoded, feed_dict={xs: view_data})
         for i in range(COMPARE_COLS):
@@ -58,8 +69,8 @@ for step in range(1000):
 # plt.show()
 
 # visualize in 2D plot
-test_x = mnist.test.images[:200]
-test_y = mnist.test.labels[:200]
+test_x = mnist.test.images[:5000]
+test_y = mnist.test.labels[:5000]
 
 encoded_data = sess.run(encoded, {xs: test_x})
 f = plt.figure(2, figsize=(10, 10))
