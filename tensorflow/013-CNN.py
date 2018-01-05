@@ -20,7 +20,7 @@ xs_4d = tf.reshape(xs, [-1, IMAGE_HEIGHT, IMAGE_WIDTH, 1]) #这里的 -1 表示�
 ys = tf.placeholder(tf.float32, [None, 1*CHAR_SET_LEN]) #一个数字，十种可能
 
 # con1 = tf.layers.conv2d(image, 16, 5, 1, 'same', activation=tf.nn.relu) # 28*28*16
-con1 = tf.layers.conv2d(xs_4d, 16, 5, 1, 'valid', activation=tf.nn.relu) # 24*24*16
+con1 = tf.layers.conv2d(inputs=xs_4d, filters=16, kernel_size=5, strides=1, padding='valid', activation=tf.nn.relu) # 24*24*16
 con1 = tf.layers.dropout(con1, rate=0.5)
 p1 = tf.layers.max_pooling2d(con1, 2, 2) # 12*12*16
 # con2 = tf.layers.conv2d(p1, 32, 5, 1, 'same', activation=tf.nn.relu) #14*14*32
