@@ -53,11 +53,11 @@ class CNN(torch.nn.Module):
         )
         self.out = torch.nn.Linear(32*7*7, 10)
 
-    def forward(self, input):
-        input = self.conv1(input)
-        input = self.conv2(input)  #[batch, 32, 7, 7]
-        input = input.view(input.size(0), -1)
-        output = self.out(input)
+    def forward(self, x):
+        x = self.conv1(x)
+        x = self.conv2(x)  #[batch, 32, 7, 7]
+        x = input.view(x.size(0), -1)
+        output = self.out(x)
         return output
 
 cnn = CNN()
