@@ -42,7 +42,7 @@ class RNN(torch.nn.Module):
         r_out, (h_n, h_c) = self.rnn(x, None) # None 表示初始 hidden state 会用全0的 state
 
         # 选取最后一个时间点的 r_out 输出
-        # 这里 r_out[:, -1, :] 的值也是 h_n 的值
+        # 这里 r_out[:, -1, :] 的值也是 h_n 的值 [50, 28, 64]
         out = self.out(r_out[:, -1, :]) #[batch, time_step, input_size] 最后一个时刻的输出
         return out
 

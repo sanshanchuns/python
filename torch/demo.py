@@ -1,12 +1,12 @@
 import numpy as np
 import torch
 
-a = torch.ones(2, 3, 1, 2)
+outs = []
 
-b = a.view(a.size(0), -1)
+for i in range(10):
+    outs.append(torch.ones(1))
 
-print(a.size(1))
+print(outs)
+print(torch.stack(outs))
+print(torch.stack(outs, dim=1))
 
-a = np.ones((10, 1))
-
-# print(a.squeeze().unsqueeze())
