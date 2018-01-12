@@ -29,7 +29,7 @@ N_TEST_IMG = 5
 
 # Mnist digits dataset
 train_data = torchvision.datasets.MNIST(
-    root='./mnist/',
+    root='../torch/mnist/',
     train=True,                                     # this is training data
     transform=torchvision.transforms.ToTensor(),    # Converts a PIL.Image or numpy.ndarray to
                                                     # torch.FloatTensor of shape (C x H x W) and normalize in the range [0.0, 1.0]
@@ -37,11 +37,11 @@ train_data = torchvision.datasets.MNIST(
 )
 
 # plot one example
-print(train_data.train_data.size())     # (60000, 28, 28)
-print(train_data.train_labels.size())   # (60000)
-plt.imshow(train_data.train_data[2].numpy(), cmap='gray')
-plt.title('%i' % train_data.train_labels[2])
-plt.show()
+# print(train_data.train_data.size())     # (60000, 28, 28)
+# print(train_data.train_labels.size())   # (60000)
+# plt.imshow(train_data.train_data[2].numpy(), cmap='gray')
+# plt.title('%i' % train_data.train_labels[2])
+# plt.show()
 
 # Data Loader for easy mini-batch return in training, the image batch shape will be (50, 1, 28, 28)
 train_loader = Data.DataLoader(dataset=train_data, batch_size=BATCH_SIZE, shuffle=True)
