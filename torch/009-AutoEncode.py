@@ -9,6 +9,7 @@ EPOCH = 10
 LR = 0.005
 BATCH_SIZE = 64
 N_TEST_IMG = 5
+ACT = torch.nn.Tanh()
 
 torch.manual_seed(1)    # reproducible
 
@@ -30,21 +31,21 @@ class AutoEncode(torch.nn.Module):
         super(AutoEncode, self).__init__()
         self.encoder = torch.nn.Sequential(
             torch.nn.Linear(28*28, 128),
-            torch.nn.Tanh(),
+            ACT,
             torch.nn.Linear(128, 64),
-            torch.nn.Tanh(),
+            ACT,
             torch.nn.Linear(64, 12),
-            torch.nn.Tanh(),
+            ACT,
             torch.nn.Linear(12, 3),
         )
 
         self.decoder = torch.nn.Sequential(
             torch.nn.Linear(3, 12),
-            torch.nn.Tanh(),
+            ACT,
             torch.nn.Linear(12, 64),
-            torch.nn.Tanh(),
+            ACT,
             torch.nn.Linear(64, 128),
-            torch.nn.Tanh(),
+            ACT,
             torch.nn.Linear(128, 28*28),
             torch.nn.Sigmoid(),  #[0, 1]
         )
