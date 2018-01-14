@@ -2,6 +2,6 @@
 
 cd /Users/leo/Documents/workspace-test/python
 git add .
-git ci -m"auto_push_commit"
+git ci -m"$(date) $line"
 git pull --rebase
 git push
