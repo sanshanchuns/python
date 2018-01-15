@@ -1,2 +1,2 @@
 Loading SDL sound with coreaud driver...
-2018-01-14 15:59:54.811 fceux[80745:14607762] 15:59:54.811 WARNING:  140: This application, or a library it uses, is using the deprecated Carbon Component Manager for hosting Audio Units. Support for this will be removed in a future release. Also, this makes the host incompatible with version 3 audio units. Please transition to the API's in AudioComponent.h.
+2018-01-15 07:53:17.456 fceux[81861:14717887] 07:53:17.455 WARNING:  140: This application, or a library it uses, is using the deprecated Carbon Component Manager for hosting Audio Units. Support for this will be removed in a future release. Also, this makes the host incompatible with version 3 audio units. Please transition to the API's in AudioComponent.h.

@@ -47,9 +47,13 @@ class DQN(object):
     def __init__(self):
         self.eval_net, self.target_net = Net(), Net()
 
-        self.learn_step_counter = 0                                     # for target updating
-        self.memory_counter = 0                                         # for storing memory
-        self.memory = np.zeros((MEMORY_CAPACITY, N_STATES * 2 + 2))     # initialize memory
+        self.learn_step_counter = 0
+        # for target updating
+        self.memory_counter = 0
+        # for storing memory
+        self.memory = np.zeros((MEMORY_CAPACITY, N_STATES * 2 + 2)) # 4*2+2 列
+        # initialize memory
+
         self.optimizer = torch.optim.Adam(self.eval_net.parameters(), lr=LR)
         self.loss_func = nn.MSELoss()
 
@@ -75,17 +79,21 @@ class DQN(object):
 
     def learn(self):
         # target parameter update
+        # 每一百步赋值一次
         if self.learn_step_counter % TARGET_REPLACE_ITER == 0:
             self.target_net.load_state_dict(self.eval_net.state_dict())
         self.learn_step_counter += 1
 
         # sample batch transitions
+        # 以下就是 mini-batch 的实现原理
         sample_index = np.random.choice(MEMORY_CAPACITY, BATCH_SIZE)
         b_memory = self.memory[sample_index, :]
-        b_s = Variable(torch.FloatTensor(b_memory[:, :N_STATES]))
-        b_a = Variable(torch.LongTensor(b_memory[:, N_STATES:N_STATES+1].astype(int)))
-        b_r = Variable(torch.FloatTensor(b_memory[:, N_STATES+1:N_STATES+2]))
-        b_s_ = Variable(torch.FloatTensor(b_memory[:, -N_STATES:]))
+        # 随机选中一系列范围内的 batch_size 的行
+
+        b_s = Variable(torch.FloatTensor(b_memory[:, :N_STATES])) #(0,4)
+        b_a = Variable(torch.LongTensor(b_memory[:, N_STATES:N_STATES+1].astype(int))) #(4,5)
+        b_r = Variable(torch.FloatTensor(b_memory[:, N_STATES+1:N_STATES+2])) #(5,6)
+        b_s_ = Variable(torch.FloatTensor(b_memory[:, -N_STATES:])) #(6,10)
 
         # q_eval w.r.t the action in experience
         q_eval = self.eval_net(b_s).gather(1, b_a)  # shape (batch, 1)
@@ -102,6 +110,7 @@ dqn = DQN()
 print('\nCollecting experience...')
 for i_episode in range(400):
     s = env.reset()
+    # [position of cart, velocity of cart, angle of pole, rotation rate of pole]
     ep_r = 0
     while True:
         env.render()
