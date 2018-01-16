@@ -15,13 +15,14 @@ outs = []
 # b = np.random.choice(10, 3)
 # print(a[b, :])
 
-# import gym
+import gym
 # import gym_pull
-import ppaquette_gym_super_mario
+# import ppaquette_gym_super_mario
 # gym_pull.pull('github.com/ppaquette/gym-super-mario')
 # Only required once, envs will be loaded with import gym_pull afterwards
-# env = gym.make('ppaquette/SuperMarioBros-1-1-v0')
-# env.reset()
+env = gym.make('SuperMarioBros-1-1-v0')
+s = env.reset()
+print(s.shape)
 #
 # while True:
 #     env.render()
