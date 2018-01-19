@@ -65,7 +65,7 @@ def update_env(S, episode, step_counter):
         interaction = 'Episode %s: total_steps = %s' % (episode+1, step_counter)
         print('\r{}'.format(interaction), end='')
         time.sleep(2)
-        print('\r                                ', end='')
+        print('\r', end='')
     else:
         env_list[S] = 'o'
         interaction = ''.join(env_list)
