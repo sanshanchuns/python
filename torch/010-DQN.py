@@ -70,7 +70,7 @@ class DQN(object):
         return action
 
     def store_transition(self, s, a, r, s_):
-        transition = np.hstack((s, [a, r], s_))
+        transition = np.hstack((s, a, r, s_))
         # replace the old memory with new memory
         # 只有2000行记录，超过2000会覆盖原来的行
         index = self.memory_counter % MEMORY_CAPACITY
