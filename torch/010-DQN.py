@@ -45,7 +45,7 @@ class Net(nn.Module):
 
 class DQN(object):
     def __init__(self):
-        self.eval_net, self.target_net = Net(), Net()
+        self.eval_net, self.target_net =____ Net(), Net()
 
         self.learn_step_counter = 0
         # for target updating
