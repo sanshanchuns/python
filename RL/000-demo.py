@@ -8,17 +8,9 @@ table = pd.DataFrame(
     columns=ACTIONS,
 )
 
-# table.iloc[0, 0] = 1
+table.iloc[0, 1] = 1
 
-print(type(table))
-print(table)
+actions = table.iloc[0, :]
 
-state_actions = table.iloc[0, :]
-print(type(state_actions))
-
-print(state_actions.idxmax())
-if not state_actions.any():
-    print(state_actions.all())
-
-if state_actions.all() == 0:
-    print('all zero')
+print(table.ix[0, 0])
+print(actions.idxmax())
