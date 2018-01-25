@@ -11,7 +11,7 @@ N_STATES = 6
 
 np.random.seed(2)
 
-def build_q_table(n_states, actions)
+def build_q_table(n_states, actions):
     return pd.DataFrame(
         np.zeros((n_states, len(actions))),
         columns=actions
@@ -25,6 +25,7 @@ def choose_action(S, q_table):
         action = np.random.choice(ACTIONS)
     else:
         action = actions.idxmax()
+    return action
 
 def get_state_from_env(S, A):
 
@@ -45,7 +46,7 @@ def get_state_from_env(S, A):
     return S_, R
 
 def update_env(S, episode, step_counter):
-    env_list = '-' * (N_STATES -1) + 'T'
+    env_list = ['-'] * (N_STATES -1) + ['T']
 
     if S == 'terminal':
         print('Episode: %d Steps: %d ' % (episode, step_counter))
@@ -59,5 +60,35 @@ def lr():
     for episode in range(EPISODES):
         S = 0
         step_counter = 0
-        
+        terminated = False
+
+        update_env(S, episode, step_counter)
+
+        while not terminated:
+
+            A = choose_action(S, q_table)
+            S_, R = get_state_from_env(S, A)
+            q_predict = q_table.ix[S, A]
+
+            if S_ == 'terminal':
+                q_target = R
+                terminated = True
+            else:
+                q_target = R + GAMMA * q_table.iloc[S_, :].max()
+
+            q_table.ix[S, A] += LR * (q_target - q_predict)
+            S = S_
+
+            step_counter += 1
+            update_env(S, episode, step_counter)
+
+    return q_table
+
+if __name__ == '__main__':
+    q_table = lr()
+    print(q_table)
+
+
+
+
 
