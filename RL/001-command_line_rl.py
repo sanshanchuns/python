@@ -82,11 +82,10 @@ def lr():
             step_counter += 1
             update_env(S, episode, step_counter)
 
-    return q_table
+    print(q_table)
 
 if __name__ == '__main__':
-    q_table = lr()
-    print(q_table)
+    lr()
 
 
 
