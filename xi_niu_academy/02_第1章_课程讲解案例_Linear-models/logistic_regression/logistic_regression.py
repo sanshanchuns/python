@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+from scipy.optimize import minimize
 
 def loaddata(file, delimiter):
     return np.loadtxt(file, delimiter=delimiter)
@@ -44,3 +45,30 @@ def costFunction(theta, X, y):
         return (np.inf)
     return J[0]
 
+
+# 求解梯度
+def gradient(theta, X, y):
+    m = y.size
+    h = sigmoid(X.dot(theta.reshape(-1, 1)))
+
+    grad = (1.0 / m) * X.T.dot(h - y)
+
+    return (grad.flatten())
+
+
+initial_theta = np.zeros(X.shape[1])
+cost = costFunction(initial_theta, X, y)
+grad = gradient(initial_theta, X, y)
+print('Cost: \n', cost)
+print('Grad: \n', grad)
+
+res = minimize(costFunction, initial_theta, args=(X,y), jac=gradient, options={'maxiter':400})
+print(res)
+
+
+def predict(theta, X, threshold=0.5):
+    p = sigmoid(X.dot(theta.T)) >= threshold
+    return(p.astype('int'))
+
+passRate = sigmoid(np.array([1, 45, 85]).dot(res.x.T))
+print(passRate)
