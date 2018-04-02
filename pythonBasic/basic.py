@@ -65,6 +65,8 @@ for i in range(100):
 # if 5 in l:
 #     print(l.index(5))
 
+a = np.array([5,6])
+b = np.array([[2,3], [-1,4]])
 
 # class Solution:
 #     def twoSum(self, nums, target):
