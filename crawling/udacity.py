@@ -25,9 +25,8 @@
 #         #     }
 
 import urllib
-import chardet
 
-uris = ['5ybmfAEnxqM', 'iQK2zXTiZmc', 'nb8AKLQtUrY', 'R1PXQB-2eU0', 'UM_5b3C4Jtw', 'WiyCqO82_-A']
+uris = ['5ybmfAEnxqM', 'nb8AKLQtUrY']
 
 urls = ['https://s3.cn-north-1.amazonaws.com.cn/u-subs-vtt/zh-cn/{}.vtt'.format(i) for i in uris]
 
@@ -35,40 +34,7 @@ video_urls = ['https://s3.cn-north-1.amazonaws.com.cn/u-vid-hd/{}.mp4'.format(i)
 
 target_path = '/Users/leo/Downloads/'
 
-# for index, url_tuple in enumerate(zip(urls, video_urls)):
+for index, url_tuple in enumerate(zip(urls, video_urls)):
     # print index, url_tuple[0], url_tuple[1]
-    # urllib.urlretrieve(url_tuple[0], target_path + uris[index] + '.srt')
-    # urllib.urlretrieve(url_tuple[1], target_path + uris[index] + '.mp4')
-
-for path in [target_path + uri + '.srt' for uri in uris]:
-    with open(path, 'r') as text:
-        # raw_text = text.read().decode(encoding='UTF-8',errors='strict').split()
-        raw_text = text.read().split()
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    urllib.urlretrieve(url, target_path + uris[index] + '.vtt')
+    urllib.urlretrieve(url, target_path + uris[index] + '.mp4')
