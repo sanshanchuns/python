@@ -4,19 +4,19 @@ import string
 import random
 import os
 
-if not os.path.exists('./craling/output.txt'):
-    with open('./craling/Walden.txt', 'r') as text:
+if not os.path.exists('./output.txt'):
+    with open('./Walden.txt', 'r') as text:
         words = [raw_word.strip(string.punctuation).lower() for raw_word in text.read().split()]
         word_index = set(words)
         word_list_filter = {}
         for word in sorted(word_index):
             if (words.count(word) > 500):
                 word_list_filter[words.count(word)] = word
-        with open('./craling/output.txt', 'w') as output:
+        with open('./output.txt', 'w') as output:
             output.write(str(word_list_filter))
 
     # print(word_list_filter)
-with open('./craling/output.txt') as text:
+with open('./output.txt') as text:
     word_list_filter = eval(text.read())
     count_x = sorted(list(word_list_filter.keys()), reverse=True)  # count
     word_y = list(word_list_filter.values())  # words
