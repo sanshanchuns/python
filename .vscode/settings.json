@@ -1,3 +1,4 @@
 {
-    "python.pythonPath": "/Users/leo/.pyenv/versions/3.6.2/bin/python"
+    "python.pythonPath": "/Users/leo/.pyenv/versions/3.7.0/bin/python",
+    "python.linting.pylintEnabled": false
 }
