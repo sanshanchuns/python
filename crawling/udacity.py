@@ -120,35 +120,7 @@ if __name__ == '__main__':
     downloadSrcAndParse(target_path)
     # enumerateDirectory(target_path)
 
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-for index, url_tuple in enumerate(zip(urls, video_urls)):
-    # print index, url_tuple[0], url_tuple[1]
-    urllib.urlretrieve(url, target_path + uris[index] + '.vtt')
-    urllib.urlretrieve(url, target_path + uris[index] + '.mp4')
+    # for index, url_tuple in enumerate(zip(urls, video_urls)):
+    #     # print index, url_tuple[0], url_tuple[1]
+    #     urllib.urlretrieve(url, target_path + uris[index] + '.vtt')
+    #     urllib.urlretrieve(url, target_path + uris[index] + '.mp4')
