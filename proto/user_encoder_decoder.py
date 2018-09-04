@@ -5,7 +5,7 @@ import user_pb2
 user = user_pb2.User()
 
 user.uid = 150
-user.name = "leo"
+# user.name = "leo"
 
 # 序列化成二进制Serialize
 print("\nperson to bytes: ")
