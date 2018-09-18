@@ -1,4 +1,4 @@
-from flask import Flask, flash, render_template, request, abort
+from flask import Flask, flash, render_template, request, Response, abort, json
 
 app = Flask(__name__)
 app.secret_key = '123'
@@ -8,12 +8,25 @@ def hello_world():
     flash('hello world')
     return render_template('index.html')
 
+@app.route('/json', methods=['POST'])
+def my_json():
+    print(request.headers)
+    print(request.json)
+
+    form = request.form
+    print(form.get('name'))
+
+    # rt = {'info':'hello '+request.json['name']}
+    # return Response(json.dumps(rt),  mimetype='application/json')
+
+    return Response(json.dumps({'info': 'hello'}),  mimetype='application/json')
+
 @app.route('/login', methods=['POST'])
 def login():
     form = request.form
     username = form.get('username')
     password = form.get('password')
-
+    
     if not username:
         flash('please enter username')
         return render_template('index.html')
